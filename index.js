@@ -5,6 +5,9 @@ const cors = require("cors");
 app.use(cors());
 const db = require("./models");
 
+const userRoute = require("./routes/Users");
+app.use("/user", userRoute);
+
 db.sequelize
   .sync()
   .then(() => {
