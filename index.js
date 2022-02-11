@@ -8,6 +8,9 @@ const db = require("./models");
 const userRoute = require("./routes/Users");
 app.use("/user", userRoute);
 
+const adminRoute = require("./routes/Admin");
+app.use("/admin", adminRoute);
+
 db.sequelize
   .sync()
   .then(() => {
