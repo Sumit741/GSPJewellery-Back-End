@@ -11,6 +11,9 @@ app.use("/user", userRoute);
 const adminRoute = require("./routes/Admin");
 app.use("/admin", adminRoute);
 
+const productsRoute = require("./routes/Products");
+app.use("/product", productsRoute);
+
 db.sequelize
   .sync()
   .then(() => {
