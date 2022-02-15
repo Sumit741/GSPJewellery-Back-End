@@ -14,6 +14,16 @@ router.get("/byCategory/:category", async (req, res) => {
   }
 });
 
+router.get("/byProductId/:id", async (req, res) => {
+  const id = req.params.id;
+  const product = await Products.findByPk(id);
+  if (product) {
+    res.json(product);
+  } else {
+    res.json({ error: "No Products For Given Category" });
+  }
+});
+
 router.post("/add", async (req, res) => {
   const productDetails = req.body;
   await Products.create(productDetails);
