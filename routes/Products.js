@@ -24,6 +24,11 @@ router.get("/byProductId/:id", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  const products = await Products.findAll();
+  res.json(products);
+});
+
 router.post("/add", async (req, res) => {
   const productDetails = req.body;
   await Products.create(productDetails);

@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: true,
     },
+    Charge: {
+      type: DataTypes.FLOAT,
+      allowNull: true,
+    },
     Stone: {
       type: DataTypes.STRING,
       allowNull: true,
