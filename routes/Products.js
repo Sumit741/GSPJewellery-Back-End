@@ -81,3 +81,56 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+router.get("/getProducts", async (req, res) => {
+  const category = req.query.category;
+  const filter = req.query.filter;
+
+  const products = await Products.findAll({
+    ProductCategory: "rings",
+    For: "female",
+  });
+  res.json(products);
+});
+router.get("/filteritems", async (req, res) => {
+  try {
+    const category = req.query.category;
+    const filter = req.query.filter;
+    const element = req.query.element;
+    if (category !== "all") {
+      if (category && filter) {
+        const products = await Products.findAll({
+          where: {
+            ProductCategory: category,
+            For: filter,
+            ElementType: element,
+          },
+        });
+        res.json(products);
+      } else if (category) {
+        const products = await Products.findAll({
+          where: { ProductCategory: category, ElementType: element },
+        });
+        res.json(products);
+      }
+    } else if (category === "all") {
+      if (filter) {
+        const products = await Products.findAll({
+          where: { For: filter, ElementType: element },
+        });
+        res.json(products);
+      } else {
+        const products = await Products.findAll({
+          where: { ElementType: element },
+        });
+        res.json(products);
+      }
+    }
+    const products = await Products.findAll({
+      where: { ElementType: element },
+    });
+    res.json(products);
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
