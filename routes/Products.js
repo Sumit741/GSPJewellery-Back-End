@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { Products } = require("../models");
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 router.get("/byCategory/:category", async (req, res) => {
   const category = req.params.category;
@@ -133,4 +135,21 @@ router.get("/filteritems", async (req, res) => {
   } catch (error) {
     res.json({ error: error });
   }
+});
+
+router.post("/search", async (req, res) => {
+  const keyword = req.body;
+  const products = await Products.findAll({
+    where: {
+      [Op.or]: [
+        { ElementType: { [Op.like]: `%${keyword.text}%` } },
+        { ProductName: { [Op.like]: `%${keyword.text}%` } },
+        { ProductCategory: { [Op.like]: `%${keyword.text}%` } },
+        { Carat: { [Op.like]: `%${keyword.text}%` } },
+        { NetWeight: { [Op.like]: `%${keyword.text}%` } },
+        { Stone: { [Op.like]: `%${keyword.text}%` } },
+      ],
+    },
+  });
+  res.json(products);
 });

@@ -23,24 +23,22 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  try {
-    const { Username, Password } = req.body;
-    const User = await Users.findOne({ where: { Username: Username } });
-    if (!User) {
-      res.json({ error: "User doesn't exist" });
-    }
+  const { Username, Password } = req.body;
+  const User = await Users.findOne({ where: { Username: Username } });
+  if (User) {
     bcrypt.compare(Password, User.Password).then((match) => {
       if (!match) {
         res.json({ error: "Wrong Password Entered" });
+      } else {
+        const accessToken = sign(
+          { Username: Username, id: User.id },
+          "secretCode"
+        );
+        res.json({ token: accessToken, message: "YOU ARE LOGGED IN" });
       }
-      const accessToken = sign(
-        { Username: Username, id: User.id },
-        "secretCode"
-      );
-      res.json({ token: accessToken, message: "YOU ARE LOGGED IN" });
     });
-  } catch (err) {
-    res.json({ error: err });
+  } else {
+    res.json({ error: "User doesn't exist" });
   }
 });
 
