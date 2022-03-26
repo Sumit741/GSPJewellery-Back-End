@@ -3,20 +3,41 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const { Users } = require("../models");
 const { sign } = require("jsonwebtoken");
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 router.get("/", async (req, res) => {
-  const user = await Users.findAll();
+  const user = await Users.findAll({ attributes: { exclude: ["password"] } });
   res.json(user);
 });
-
+router.post("/filter", async (req, res) => {
+  const name = req.body;
+  const users = await Users.findAll({
+    where: {
+      [Op.or]: [
+        { FullName: { [Op.like]: `%${name.name}%` } },
+        { Username: { [Op.like]: `%${name.name}%` } },
+        { Address: { [Op.like]: `%${name.name}%` } },
+        { Email: { [Op.like]: `%${name.name}%` } },
+      ],
+    },
+  });
+  res.json(users);
+});
 router.post("/register", async (req, res) => {
-  const { Username, Password } = req.body;
+  const { Username, Firstname, Lastname, Email, Address, Password } = req.body;
   const user = await Users.findOne({ where: { Username: Username } });
   if (user) {
     res.json("User Already exist. Please chose another username");
   } else {
     bcrypt.hash(Password, 10).then((hash) => {
-      Users.create({ Username: Username, Password: hash });
+      Users.create({
+        Username: Username,
+        Fullname: Firstname + " " + Lastname,
+        Email: Email,
+        Address: Address,
+        Password: hash,
+      });
     });
     res.json("SUCCESSFUL REGISTRATION");
   }
@@ -40,6 +61,13 @@ router.post("/login", async (req, res) => {
   } else {
     res.json({ error: "User doesn't exist" });
   }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  const id = req.params.id;
+  await Users.destroy({ where: { id: id } });
+  const newUsersList = await Users.findAll();
+  res.json(newUsersList);
 });
 
 module.exports = router;
