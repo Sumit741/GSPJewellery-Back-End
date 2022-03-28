@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const { Users } = require("../models");
 const { sign } = require("jsonwebtoken");
 const Sequelize = require("sequelize");
+const { validateToken } = require("../middlewares/AuthUserMiddleware");
 const Op = Sequelize.Op;
 
 router.get("/", async (req, res) => {
@@ -70,4 +71,12 @@ router.delete("/delete/:id", async (req, res) => {
   res.json(newUsersList);
 });
 
+router.get("/auth", validateToken, async (req, res) => {
+  const userDet = req.user;
+  const user = await Users.findOne({
+    where: { id: userDet.id },
+    attributes: { exclude: ["Password"] },
+  });
+  res.json(user);
+});
 module.exports = router;

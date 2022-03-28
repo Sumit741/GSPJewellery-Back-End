@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Products } = require("../models");
+const { Products, Orders } = require("../models");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -100,6 +100,7 @@ router.get("/filteritems", async (req, res) => {
     const category = req.query.category;
     const filter = req.query.filter;
     const element = req.query.element;
+
     if (category !== "all") {
       if (category && filter) {
         const products = await Products.findAll({
@@ -114,9 +115,13 @@ router.get("/filteritems", async (req, res) => {
         const products = await Products.findAll({
           where: { ProductCategory: category, ElementType: element },
         });
-        res.json(products);
+        if (products) {
+          res.json(products);
+        } else {
+          res.json("No Produxts");
+        }
       }
-    } else if (category === "all") {
+    } else {
       if (filter) {
         const products = await Products.findAll({
           where: { For: filter, ElementType: element },
@@ -129,12 +134,12 @@ router.get("/filteritems", async (req, res) => {
         res.json(products);
       }
     }
-    const products = await Products.findAll({
-      where: { ElementType: element },
-    });
-    res.json(products);
+    // const products = await Products.findAll({
+    //   where: { ElementType: element },
+    // });
+    // res.json(products);
   } catch (error) {
-    res.json({ error: error });
+    res.json({ error: error.message });
   }
 });
 
@@ -153,4 +158,18 @@ router.post("/search", async (req, res) => {
     },
   });
   res.json(products);
+});
+
+router.get("/all", async (req, res) => {
+  try {
+    const prod = await Products.findAll();
+    res.json(prod);
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+});
+
+router.get("/orders", async (req, res) => {
+  const productOrders = await Products.findAll({ include: [Orders] });
+  res.json(productOrders);
 });
