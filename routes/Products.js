@@ -173,3 +173,26 @@ router.get("/orders", async (req, res) => {
   const productOrders = await Products.findAll({ include: [Orders] });
   res.json(productOrders);
 });
+
+router.post("/filterOrders", async (req, res) => {
+  const keywords = req.body;
+  const productOrders = await Products.findAll({ include: [Orders] });
+  const filteredList = productOrders
+    .filter((item) => item.Order !== null)
+    .filter(
+      (item) =>
+        item.ElementType.toLowerCase().includes(keywords.text.toLowerCase()) ||
+        item.id === keywords.text ||
+        item.ProductName.toLowerCase().includes(keywords.text.toLowerCase()) ||
+        item.Order.TotalPrice === parseInt(keywords.text) ||
+        item.Order.PaymentOption.toLowerCase().includes(
+          keywords.text.toLowerCase()
+        ) ||
+        item.Order.PaymentStatus.toLowerCase().includes(
+          keywords.text.toLowerCase()
+        ) ||
+        item.ProductCategory.toLowerCase().includes(keywords.text.toLowerCase())
+    );
+
+  res.json(filteredList);
+});
