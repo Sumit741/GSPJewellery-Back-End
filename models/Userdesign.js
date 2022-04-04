@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Userdesign = sequelize.define("Userdesign", {
     Link: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
   });
