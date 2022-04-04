@@ -17,6 +17,12 @@ app.use("/product", productsRoute);
 const ordersRoute = require("./routes/Orders");
 app.use("/orders", ordersRoute);
 
+const picdesignRoute = require("./routes/Picfordesign");
+app.use("/pic", picdesignRoute);
+
+const userDesignRoute = require("./routes/Userdesign");
+app.use("/userdesign", userDesignRoute);
+
 db.sequelize
   .sync()
   .then(() => {

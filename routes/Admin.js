@@ -30,17 +30,22 @@ router.post("/login", async (req, res) => {
     const adminExist = await Admins.findOne({ where: { Username: Username } });
     if (!adminExist) {
       res.json({ error: "User doen't exist" });
+    } else {
+      bcrypt.compare(Password, adminExist.Password).then((match) => {
+        if (!match) {
+          res.json({ error: "Password doesn't match" });
+        }
+        const accessToken1 = sign(
+          { Username: Username, id: adminExist.id },
+          "adminTokensecret"
+        );
+        res.json({
+          token: accessToken1,
+          Username: Username,
+          id: adminExist.id,
+        });
+      });
     }
-    bcrypt.compare(Password, adminExist.Password).then((match) => {
-      if (!match) {
-        res.json({ error: "Password doesn't match" });
-      }
-      const accessToken1 = sign(
-        { Username: Username, id: adminExist.id },
-        "adminTokensecret"
-      );
-      res.json({ token: accessToken1, Username: Username, id: adminExist.id });
-    });
   } catch (error) {
     req.json({ error: error });
   }
