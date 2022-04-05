@@ -23,6 +23,9 @@ app.use("/pic", picdesignRoute);
 const userDesignRoute = require("./routes/Userdesign");
 app.use("/userdesign", userDesignRoute);
 
+const feedbackRoute = require("./routes/Feedback");
+app.use("/feedback", feedbackRoute);
+
 db.sequelize
   .sync()
   .then(() => {

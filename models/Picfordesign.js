@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Picfordesign = sequelize.define("Picfordesign", {
     Link: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     For: {
