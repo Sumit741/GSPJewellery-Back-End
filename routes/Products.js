@@ -3,6 +3,8 @@ const router = express.Router();
 const { Products, Orders } = require("../models");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const axios = require("axios");
+const { response } = require("express");
 
 router.get("/byCategory/:category", async (req, res) => {
   const category = req.params.category;
@@ -95,6 +97,7 @@ router.get("/getProducts", async (req, res) => {
   });
   res.json(products);
 });
+
 router.get("/filteritems", async (req, res) => {
   try {
     const category = req.query.category;
@@ -195,4 +198,137 @@ router.post("/filterOrders", async (req, res) => {
     );
 
   res.json(filteredList);
+});
+
+router.get("/count", async (req, res) => {
+  const count = await Products.findAll({
+    attributes: [
+      "ProductCategory",
+      [Sequelize.fn("COUNT", Sequelize.col("ProductCategory")), "no_of_prod"],
+    ],
+    group: ["Products.ProductCategory"],
+  });
+  res.json(count);
+});
+
+router.get("/orderscount", async (req, res) => {
+  const count = await Products.findAll({
+    attributes: [
+      "ProductCategory",
+      [Sequelize.fn("COUNT", Sequelize.col("Order.ProductId")), "no_of_prod"],
+    ],
+    include: [Orders],
+    group: ["Order.ProductId"],
+  });
+  res.json(count);
+});
+
+router.get("/testfilter", async (req, res) => {
+  try {
+    const category = req.query.category;
+    const filter = req.query.filter;
+    const element = req.query.element;
+
+    if (category !== "all") {
+      if (category && filter) {
+        const products = await Products.findAll({
+          where: {
+            ProductCategory: category,
+            For: filter,
+            ElementType: element,
+          },
+        });
+        res.json(products);
+      } else if (category) {
+        const products = await Products.findAll({
+          where: { ProductCategory: category, ElementType: element },
+        });
+        if (products) {
+          res.json(products);
+        } else {
+          res.json("No Produxts");
+        }
+      }
+    } else {
+      if (filter) {
+        const products = await Products.findAll({
+          where: { For: filter, ElementType: element },
+        });
+        res.json(products);
+      } else {
+        const products = await Products.findAll({
+          where: { ElementType: element },
+        });
+        res.json(products);
+      }
+    }
+    // const products = await Products.findAll({
+    //   where: { ElementType: element },
+    // });
+    // res.json(products);
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+});
+
+router.get("/ft", async (req, res) => {
+  const category = req.query.category;
+  const filter = req.query.filter;
+  const element = req.query.element;
+  const carat = req.query.carat;
+
+  if (category !== "all") {
+    if (category && filter && carat) {
+      const products = await Products.findAll({
+        where: {
+          ProductCategory: category,
+          For: filter,
+          Carat: carat,
+          ElementType: element,
+        },
+      });
+      res.json(products);
+    } else if (category && filter) {
+      const products = await Products.findAll({
+        where: { ProductCategory: category, For: filter, ElementType: element },
+      });
+      res.json(products);
+    } else if (category && carat) {
+      const products = await Products.findAll({
+        where: {
+          ProductCategory: category,
+          Carat: carat,
+          ElementType: element,
+        },
+      });
+      res.json(products);
+    } else {
+      const products = await Products.findAll({
+        where: { ProductCategory: category, ElementType: element },
+      });
+      res.json(products);
+    }
+  } else {
+    if (filter && carat) {
+      const products = await Products.findAll({
+        where: { Carat: carat, For: filter, ElementType: element },
+      });
+      res.json(products);
+    } else if (filter) {
+      const products = await Products.findAll({
+        where: { ElementType: element, For: filter },
+      });
+      res.json(products);
+    } else if (carat) {
+      const products = await Products.findAll({
+        where: { ElementType: element, Carat: carat },
+      });
+      res.json(products);
+    } else {
+      const products = await Products.findAll({
+        where: { ElementType: element },
+      });
+      res.json(products);
+    }
+  }
 });
