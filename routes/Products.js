@@ -215,7 +215,7 @@ router.get("/orderscount", async (req, res) => {
   const count = await Products.findAll({
     attributes: [
       "ProductCategory",
-      [Sequelize.fn("COUNT", Sequelize.col("Order.ProductId")), "no_of_prod"],
+      [Sequelize.fn("COUNT", Sequelize.col("Order.ProductId")), "orders"],
     ],
     include: [Orders],
     group: ["Order.ProductId"],
@@ -330,5 +330,65 @@ router.get("/ft", async (req, res) => {
       });
       res.json(products);
     }
+  }
+});
+
+router.get("/filtercategoryproducts/:category", async (req, res) => {
+  const category = req.params.category;
+  const gender = req.query.gender;
+  const element = req.query.element;
+  const carat = req.query.carat;
+
+  if (gender && element && carat) {
+    const products = await Products.findAll({
+      where: {
+        ProductCategory: category,
+        For: gender,
+        ElementType: element,
+        Carat: carat,
+      },
+    });
+    res.json(products);
+  } else if (gender && element) {
+    const products = await Products.findAll({
+      where: {
+        ProductCategory: category,
+        For: gender,
+        ElementType: element,
+      },
+    });
+    res.json(products);
+  } else if (element && carat) {
+    const products = await Products.findAll({
+      where: {
+        ProductCategory: category,
+        ElementType: element,
+        Carat: carat,
+      },
+    });
+    res.json(products);
+  } else if (gender) {
+    const products = await Products.findAll({
+      where: {
+        ProductCategory: category,
+        For: gender,
+      },
+    });
+    res.json(products);
+  } else if (element) {
+    const products = await Products.findAll({
+      where: {
+        ProductCategory: category,
+        ElementType: element,
+      },
+    });
+    res.json(products);
+  } else {
+    const products = await Products.findAll({
+      where: {
+        ProductCategory: category,
+      },
+    });
+    res.json(products);
   }
 });
