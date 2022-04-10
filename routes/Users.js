@@ -53,7 +53,7 @@ router.post("/login", async (req, res) => {
         res.json({ error: "Wrong Password Entered" });
       } else {
         const accessToken = sign(
-          { Username: Username, id: User.id },
+          { Username: Username, Email: User.Email, id: User.id },
           "secretCode"
         );
         res.json({ token: accessToken, message: "YOU ARE LOGGED IN" });

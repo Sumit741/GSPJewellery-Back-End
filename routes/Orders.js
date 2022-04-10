@@ -3,9 +3,7 @@ const router = express.Router();
 const { Orders, Products } = require("../models");
 
 router.get("/", async (req, res) => {
-  const orders = await Orders.findAll({
-    include: [Products],
-  });
+  const orders = await Orders.findAll();
   res.json(orders);
 });
 

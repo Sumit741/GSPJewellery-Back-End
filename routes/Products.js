@@ -62,7 +62,7 @@ router.put("/byProductId", async (req, res) => {
           ProductCategory: productDet.ProductCategory,
           Carat: productDet.Carat,
           For: productDet.For,
-          Image: productDet.Image,
+          // Image: productDet.Image,
           ProductName: productDet.ProductName,
           NetWeight: productDet.NetWeight,
           WeightWithLoss: productDet.WeightWithLoss,
