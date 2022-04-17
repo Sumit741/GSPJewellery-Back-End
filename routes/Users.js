@@ -79,4 +79,26 @@ router.get("/auth", validateToken, async (req, res) => {
   });
   res.json(user);
 });
+
+router.put("/resetpassword", async (req, res) => {
+  const userDet = req.body;
+  const user = await Users.findOne({ where: { Username: userDet.Username } });
+  if (user) {
+    bcrypt.hash(userDet.Password, 10).then(async (hash) => {
+      await Users.update(
+        {
+          Password: hash,
+        },
+        {
+          where: {
+            Username: userDet.Username,
+          },
+        }
+      );
+    });
+    res.json("Password Reset Successfully");
+  } else {
+    res.json({ error: "User doesn't exist" });
+  }
+});
 module.exports = router;

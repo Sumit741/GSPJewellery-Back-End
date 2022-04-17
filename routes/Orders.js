@@ -13,6 +13,7 @@ router.post("/", async (req, res) => {
     UserId: order.UserId,
     Customername: order.Customername,
     OrderAddress: order.OrderAddress,
+    Contact: order.Contact,
     unitPrice: order.unitPrice,
     Quantity: order.Quantity,
     TotalPrice: order.TotalPrice,
