@@ -26,6 +26,9 @@ app.use("/userdesign", userDesignRoute);
 const feedbackRoute = require("./routes/Feedback");
 app.use("/feedback", feedbackRoute);
 
+const categoryRoute = require("./routes/Category");
+app.use("/category", categoryRoute);
+
 db.sequelize
   .sync()
   .then(() => {
